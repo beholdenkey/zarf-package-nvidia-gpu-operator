@@ -28,3 +28,4 @@ A Zarf package for the Nvidia GPU Operator. This zarf package is intended to per
 - [Nvidia GPU Operator](https://github.com/NVIDIA/gpu-operator)
 - [Nvidia GPU Operator Documentation](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html)
 - [Nvidia Container Registry](https://catalog.ngc.nvidia.com/containers)
+- [Installing the Nvidia GPU Operator](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html#chart-customization-options)
