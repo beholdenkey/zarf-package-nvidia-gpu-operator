@@ -1,38 +1,36 @@
----
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: "3"
 
 tasks:
-  mirror.almalinux8:
-    desc: "Creates a local RPM Repository for AlmaLinux 8"
-    dir: "rpm"
+  deps.rockylinux8:
+    desc: "Creates a local RPM Repository for Rocky Linux 8"
+    dir: "rpm/rockylinux8"
     cmds:
+      - mkdir -p rpm/rockylinux8
       - >
-        docker run -it --rm -v "$(pwd):/opt/rpms" --platform linux/amd64 almalinux:8 /bin/bash -c "
-          yum update -y && yum install -y createrepo dnf dnf-plugins-core yum-utils;
-          if [ ! -d /opt/rpms/almalinux8 ]; then
-            mkdir -p /opt/rpms/almalinux8;
-            reposync -p /opt/rpms/almalinux8;
-            createrepo --database /opt/rpms/almalinux8;
-          fi
+        docker run -it --rm -v "$(pwd)/rpm/rockylinux8:/opt/rpms" --platform linux/amd64 rockylinux:8 /bin/bash -c "
+          packages=('kernel-devel' 'kernel-core' 'elfutils-libelf' 'elfutils-libelf-devel' 'kernel-headers' 'gcc' 'make');
+          yum update -y && yum install -y createrepo dnf dnf-plugins-core;
+          dnf makecache;
+          for package in \${packages[@]}; do
+              dnf install --downloadonly --downloaddir=/opt/rpms \$package -y;
+          done;
+          createrepo --database /opt/rpms;
         "
-      - if [ ! -f ../almalinux8.tar.gz ]; then tar -czf ../almalinux8.tar.gz -C . .; fi
+      - tar -czf ../rockylinux8.tar.gz -C . .
       - find . -type f ! -name '*.tar.gz' -delete
-      - find . -type d -empty -delete
-  test.almalinux8:
-    summary: This task is for testing the deps task for AlmaLinux 8
+      - find . -depth -type d -empty -delete
+  test.rockylinux8:
     desc: "Extracts the tarball, sets up a local repo, and installs the packages"
     cmds:
       - >
-        docker run -it --rm -v "$(pwd):/opt/rpms" --platform linux/amd64 almalinux:8 /bin/bash -c "
-          if [ ! -d /opt/rpms/almalinux8 ]; then
-            tar -xzf /opt/rpms/almalinux8.tar.gz -C /opt/rpms;
-            echo -e '[baseos]\nname=AlmaLinux \$releasever - BaseOS\nbaseurl=file:///opt/rpms/almalinux8/baseos\nenabled=1\ngpgcheck=0' > /etc/yum.repos.d/local.repo;
-            echo -e '[appstream]\nname=AlmaLinux \$releasever - AppStream\nbaseurl=file:///opt/rpms/almalinux8/appstream\nenabled=1\ngpgcheck=0' >> /etc/yum.repos.d/local.repo;
-            echo -e '[extras]\nname=AlmaLinux \$releasever - Extras\nbaseurl=file:///opt/rpms/almalinux8/extras\nenabled=1\ngpgcheck=0' >> /etc/yum.repos.d/local.repo;
-            yum clean all;
-            yum makecache;
-            yum install --disablerepo=* --enablerepo=baseos,appstream,extras 'Development Tools' -y;
-            yum distro-sync --disablerepo=* --enablerepo=baseos,appstream,extras -y;
-          fi
+        docker run -it --rm -v "$(pwd)/rpm/rockylinux8:/opt/rpms" --platform linux/amd64 rockylinux:8 /bin/bash -c "
+          tar -xzf /opt/rpms/rockylinux8.tar.gz -C /opt/rpms;
+          echo -e '[local]\nname=Local Repo\nbaseurl=file:///opt/rpms\nenabled=1\ngpgcheck=0' > /etc/yum.repos.d/local.repo;
+          yum clean all;
+          yum makecache;
+          packages=('kernel-devel' 'kernel-headers' 'gcc' 'make');
+          for package in \${packages[@]}; do
+              yum install \$package -y;
+          done;
         "
