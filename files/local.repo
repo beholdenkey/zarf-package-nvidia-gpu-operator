@@ -1,0 +1,6 @@
+[local]
+name=Local Repository
+baseurl=file:///tmp/local-rpms/
+enabled=1
+gpgcheck=1
+protect=1

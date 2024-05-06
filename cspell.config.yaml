@@ -1,0 +1,47 @@
+version: "0.2"
+language: en
+ignorePaths:
+  - "**/node_modules/**"
+  - package-lock.json
+  - "**/.gitignore"
+  - "**/.mega-linter.yml"
+  - "**/.github/CODEOWNERS"
+  - "**/.github/workflows/**"
+  - "**/.git/**"
+  - "**/vscode-extension/**"
+  - .vscode
+  - report
+words:
+  - beholdenkey
+  - cmds
+  - CODEOWNERS
+  - commitlint
+  - conventionalcommits
+  - createrepo
+  - cuda
+  - Daemonset
+  - dcgm
+  - devel
+  - distros
+  - elif
+  - gdrdrv
+  - Kata
+  - KUBEVIRT
+  - mdtype
+  - modifyrepo
+  - modulemd
+  - Mofed
+  - nvcr
+  - OSCAL
+  - pushd
+  - rdma
+  - regctl
+  - repodata
+  - repotrack
+  - RHCOS
+  - Taskfile
+  - taskfiles
+  - tgagor
+  - TMPL
+  - toplevel
+  - VGPU

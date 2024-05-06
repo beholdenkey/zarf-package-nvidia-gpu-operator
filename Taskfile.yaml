@@ -1,0 +1,36 @@
+---
+version: "3"
+
+includes:
+  tools: .taskfiles/Tools/Taskfile.yaml
+  bundle: .taskfiles/Bundle/Taskfile.yaml
+  repository: .taskfiles/Repository/Taskfile.yaml
+  pre-commit:
+    aliases: ["pre"]
+    taskfile: .taskfiles/PreCommit/Taskfile.yaml
+
+tasks:
+  default:
+    desc: Show help
+    cmds:
+      - task --list
+
+  setup:
+    summary: Setup Developer Environment
+    desc: Setup Development Environment
+    deps: ["tools:docker"]
+    cmds:
+      - task bundle:k3d-standard
+      - task bundle:deploy-k3d-standard-bundle
+
+  clean:
+    summary: Clean Developer Environment
+    desc: Clean Development Environment
+    cmds:
+      - task tools:k3d-remove
+
+  nuke:
+    summary: Removed all Artifacts and Deletes the k3d Cluster
+    cmds:
+      - task -p tools:k3d-remove tools:clean
+      - zarf tools clear-cache

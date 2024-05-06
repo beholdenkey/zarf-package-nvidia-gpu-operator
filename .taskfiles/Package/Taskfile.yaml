@@ -1,0 +1,14 @@
+---
+version: "3"
+
+tasks:
+
+  create:
+    desc: Create pgk flavor of Nvidia GPU Operator
+    cmds:
+      - zarf package create . --flavor=${FLAVOR} --confirm
+
+  remove:
+    desc: Remove pgk flavor of Nvidia GPU Operator
+    cmds:
+      - zarf package remove zarf-package-*.zst --confirm

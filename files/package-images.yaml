@@ -1,0 +1,22 @@
+---
+images:
+  - nvcr.io/nvidia/driver:470.239.06-centos7
+  - nvcr.io/nvidia/driver:470.239.06-rhel8.6
+  - nvcr.io/nvidia/driver:470.239.06-rhel8.7
+  - nvcr.io/nvidia/driver:470.239.06-rhel8.8
+  - nvcr.io/nvidia/driver:470.239.06-rhel8.9
+  - nvcr.io/nvidia/driver:470.239.06-ubuntu20.04
+  - nvcr.io/nvidia/driver:535.161.08-centos7
+  - nvcr.io/nvidia/driver:535.161.08-rhel8.6
+  - nvcr.io/nvidia/driver:535.161.08-rhel8.7
+  - nvcr.io/nvidia/driver:535.161.08-rhel8.8
+  - nvcr.io/nvidia/driver:535.161.08-rhel8.9
+  - nvcr.io/nvidia/driver:535.161.08-ubuntu20.04
+  - nvcr.io/nvidia/driver:535.161.08-ubuntu22.04
+  - nvcr.io/nvidia/driver:550.54.15-centos7
+  - nvcr.io/nvidia/driver:550.54.15-rhel8.6
+  - nvcr.io/nvidia/driver:550.54.15-rhel8.7
+  - nvcr.io/nvidia/driver:550.54.15-rhel8.8
+  - nvcr.io/nvidia/driver:550.54.15-rhel8.9
+  - nvcr.io/nvidia/driver:550.54.15-ubuntu20.04
+  - nvcr.io/nvidia/driver:550.54.15-ubuntu22.04

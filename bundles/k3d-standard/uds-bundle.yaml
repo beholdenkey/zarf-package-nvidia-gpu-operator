@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/uds-cli/v0.10.4/uds.schema.json
+kind: UDSBundle
+metadata:
+  name: k3d-standard
+  description: A bundle for deploying packages on a standard k3d development cluster
+  version: "0.0.1"
+packages:
+  - name: k3d
+    repository: ghcr.io/beholdenkey/packages/k3d
+    ref: 1.6.0
+  - name: init
+    repository: ghcr.io/defenseunicorns/packages/init
+    ref: v0.33.1
+    optionalComponents:
+      - git-server

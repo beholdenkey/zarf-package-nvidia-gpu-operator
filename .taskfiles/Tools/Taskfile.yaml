@@ -1,0 +1,92 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+vars:
+  RUNTIMES: docker,podman
+
+tasks:
+  base64-clipboard:
+    desc: "Base64 encode whatever is in the clipboard"
+    silent: true
+    cmds:
+      - pbpaste | base64 | pbcopy
+    preconditions:
+      - {msg: "pbpaste is not installed. Please install pbpaste.", sh: "command -v pbpaste >/dev/null"}
+      - {msg: "pbcopy is not installed. Please install pbcopy.", sh: "command -v pbcopy >/dev/null",}
+
+  docker:
+    internal: true
+    desc: "Start Docker on macOS or Linux if it is not already running."
+    cmds:
+      - >
+        if [ "$(uname)" = "Darwin" ]; then
+          if ! pgrep -xq -- "Docker"; then
+            echo "Starting Docker on macOS..."
+            open /Applications/Docker.app
+            while ! docker system info &> /dev/null; do
+              echo "Waiting for Docker to start..."
+              sleep 5
+            done
+            echo "Docker is running."
+          else
+            echo "Docker is already running on macOS."
+          fi
+        elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
+          if ! systemctl is-active --quiet docker; then
+            echo "Starting Docker on Linux..."
+            sudo systemctl start docker
+            echo "Docker is running on Linux."
+          else
+            echo "Docker is already running on Linux."
+          fi
+        else
+          echo "Unsupported operating system."
+        fi
+    silent: true
+    preconditions:
+      - {msg: "Docker is not installed. Please install Docker.", sh: "command -v docker >/dev/null",}
+
+  port-forward:
+    desc: "Port forward Grafana to localhost"
+    summary: "Port forward Grafana to localhost"
+    silent: true
+    cmds:
+      - kubectl port-forward svc/kube-prometheus-stack-grafana 3000:80 -n monitoring
+
+  k3d-remove:
+    desc: "Remove the k3d cluster"
+    silent: true
+    cmds:
+      - k3d cluster delete dev || true
+
+  clean:
+    summary: Cleanup Zarf Artifacts
+    desc: Remove all Zarf build artifacts and delete the development cluster
+    cmds:
+      - |
+        echo "Cleaning up Zarf artifacts..."
+        rm -rf build/*
+        find . -type d -name 'zarf-sbom' -exec rm -rf {} + 2>/dev/null
+        find . -type f -name '*.tar.zst' -delete 2>/dev/null
+    silent: true
+
+  format-kcl:
+    desc: Format all KCL files recursively in the project.
+    cmds:
+      - find . -type f -name '*.kcl' -exec kcl fmt {} +
+
+  generate-docs:
+    desc: Generate Markdown documentation for KCL files.
+    cmds:
+      - kcl doc generate --format md
+
+  list-tags:
+    summary: This task lists all tags for the Nvidia driver images, it will require you to have regctl installed, and you will need to be logged in to the Nvidia registry via docker login nvcr.io
+    desc: List all tags for the Nvidia driver images
+    dir: files
+    cmds:
+      - regctl registry set nvcr.io
+      - |
+        echo "images:" > driver-images.yaml
+        regctl tag list nvcr.io/nvidia/driver | grep -v '\.vex' | grep -v '\.sbom' | grep -v 'rhcos' | egrep '550\.54\.15|535\.161\.08|470\.239\.06' | awk '{print "  - nvcr.io/nvidia/driver:"$1}' >> driver-images.yaml
