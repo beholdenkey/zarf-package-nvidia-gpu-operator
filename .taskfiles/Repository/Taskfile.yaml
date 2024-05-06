@@ -9,28 +9,29 @@ tasks:
       - mkdir -p rpm/rockylinux8
       - >
         docker run -it --rm -v "$(pwd)/rpm/rockylinux8:/opt/rpms" --platform linux/amd64 rockylinux:8 /bin/bash -c "
-          packages=('kernel-devel' 'kernel-core' 'elfutils-libelf' 'elfutils-libelf-devel' 'kernel-headers' 'gcc' 'make');
+          packages=('kernel-devel' 'elfutils-libelf' 'elfutils-libelf-devel' 'kernel-headers' 'gcc' 'make');
           yum update -y && yum install -y createrepo dnf dnf-plugins-core;
           dnf makecache;
           for package in \${packages[@]}; do
               dnf install --downloadonly --downloaddir=/opt/rpms \$package -y;
           done;
           createrepo --database /opt/rpms;
+          ls -la /opt/rpms;
         "
-      - tar -czf ../rockylinux8.tar.gz -C . .
+      - tar -czf ../rockylinux8.tar.gz -C rpm/rockylinux8 .
       - find . -type f ! -name '*.tar.gz' -delete
       - find . -depth -type d -empty -delete
   test.rockylinux8:
     desc: "Extracts the tarball, sets up a local repo, and installs the packages"
     cmds:
       - >
-        docker run -it --rm -v "$(pwd)/rpm/rockylinux8:/opt/rpms" --platform linux/amd64 rockylinux:8 /bin/bash -c "
+        docker run -it --rm -v "${PWD}/rpm:/opt/rpms" --platform linux/amd64 rockylinux:8 /bin/bash -c "
           tar -xzf /opt/rpms/rockylinux8.tar.gz -C /opt/rpms;
           echo -e '[local]\nname=Local Repo\nbaseurl=file:///opt/rpms\nenabled=1\ngpgcheck=0' > /etc/yum.repos.d/local.repo;
           yum clean all;
           yum makecache;
           packages=('kernel-devel' 'kernel-headers' 'gcc' 'make');
           for package in \${packages[@]}; do
-              yum install \$package -y;
+              yum install --disablerepo='*' --enablerepo='local' \$package -y;
           done;
         "
