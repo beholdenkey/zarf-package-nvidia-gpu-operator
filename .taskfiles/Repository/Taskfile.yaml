@@ -7,23 +7,23 @@ tasks:
     desc: "Creates a local RPM Repository for Rocky Linux 8"
     dir: "rpm"
     cmds:
-      - mkdir -p rpm/rockylinux8
+      - mkdir -p rockylinux8
       - >
-        docker run -it --rm -v "$(pwd)/rpm/rockylinux8:/opt/rpms" --platform linux/amd64 rockylinux:8 /bin/bash -c "
-          packages=('kernel-devel' 'kernel-headers' 'gcc' 'make');
+        docker run -it --rm -v "$(pwd)/rockylinux8:/opt/rpms" --platform linux/amd64 rockylinux:8 /bin/bash -c "
+          packages=('kernel-devel' 'kernel-headers');
           yum update -y && yum install -y createrepo dnf dnf-plugins-core;
           dnf makecache;
           for package in \${packages[@]}; do
               dnf install --downloadonly --downloaddir=/opt/rpms \$package -y;
           done;
-          dev_packages=(\$(dnf group info 'Development Tools' | grep -oP '(?<= )[-\w]+(?= )'));
+          dev_packages=(\$(dnf group info 'Development Tools' | grep -oP '^[-\w]+$'));
           for package in \${dev_packages[@]}; do
               dnf install --downloadonly --downloaddir=/opt/rpms \$package -y;
           done;
           createrepo --database /opt/rpms;
           ls -la /opt/rpms;
         "
-      - tar -czf ../rockylinux8.tar.gz -C rpm/rockylinux8 .
+      - tar -czf rockylinux8.tar.gz -C rockylinux8 .
       - find . -type f ! -name '*.tar.gz' -delete
       - find . -depth -type d -empty -delete
   test.rockylinux8:
