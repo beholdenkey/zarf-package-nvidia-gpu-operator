@@ -1,18 +1,23 @@
+---
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: "3"
 
 tasks:
   deps.rockylinux8:
     desc: "Creates a local RPM Repository for Rocky Linux 8"
-    dir: "rpm/rockylinux8"
+    dir: "rpm"
     cmds:
       - mkdir -p rpm/rockylinux8
       - >
         docker run -it --rm -v "$(pwd)/rpm/rockylinux8:/opt/rpms" --platform linux/amd64 rockylinux:8 /bin/bash -c "
-          packages=('kernel-devel' 'elfutils-libelf' 'elfutils-libelf-devel' 'kernel-headers' 'gcc' 'make');
+          packages=('kernel-devel' 'kernel-headers' 'gcc' 'make');
           yum update -y && yum install -y createrepo dnf dnf-plugins-core;
           dnf makecache;
           for package in \${packages[@]}; do
+              dnf install --downloadonly --downloaddir=/opt/rpms \$package -y;
+          done;
+          dev_packages=(\$(dnf group info 'Development Tools' | grep -oP '(?<= )[-\w]+(?= )'));
+          for package in \${dev_packages[@]}; do
               dnf install --downloadonly --downloaddir=/opt/rpms \$package -y;
           done;
           createrepo --database /opt/rpms;
