@@ -82,3 +82,4 @@ sudo apt-get install linux-headers-$(uname -r) -y
 ## References
 
 - [WSL2 Support](https://github.com/NVIDIA/gpu-operator/issues/318)
+- [Build GPU Driver Container Image for Rocky Linux](https://awslife.medium.com/how-to-build-nvidia-gpu-driver-image-for-rocky-linux-for-gpu-operator-740dcf2f2237)
