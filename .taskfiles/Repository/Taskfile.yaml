@@ -10,15 +10,16 @@ tasks:
       - mkdir -p rockylinux8
       - >
         docker run -it --rm -v "$(pwd)/rockylinux8:/opt/rpms" --platform linux/amd64 rockylinux:8 /bin/bash -c "
-          packages=('kernel-devel' 'kernel-headers');
-          yum update -y && yum install -y createrepo dnf dnf-plugins-core;
+          yum update -y && yum install -y createrepo dnf dnf-plugins-core findutils;
           dnf makecache;
+          dev_packages=(\$(dnf group info 'Development Tools' | grep -oP '(?<=^   ).*'));
+          sync_packages=(\$(dnf distro-sync --assumeno 2>&1 | grep -oP '(?<=Upgrade  ).*(?=  -  )'));
+          packages=('kernel-devel' 'kernel-headers' 'gcc' 'make' 'git' 'elfutils-libelf' 'elfutils-libelf-devel' \${dev_packages[@]} \${sync_packages[@]});
           for package in \${packages[@]}; do
               dnf install --downloadonly --downloaddir=/opt/rpms \$package -y;
           done;
-          dev_packages=(\$(dnf group info 'Development Tools' | grep -oP '^[-\w]+$'));
-          for package in \${dev_packages[@]}; do
-              dnf install --downloadonly --downloaddir=/opt/rpms \$package -y;
+          for package in \${packages[@]}; do
+              dnf repoquery --requires --resolve \$package | xargs -r dnf install --downloadonly --downloaddir=/opt/rpms -y;
           done;
           createrepo --database /opt/rpms;
           ls -la /opt/rpms;
