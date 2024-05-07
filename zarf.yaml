@@ -46,6 +46,6 @@ components:
     import:
       path: common
     images:
-      - nvcr.io/nvidia/cuda:12.4.1-base-ubuntu22.04'
+      - nvcr.io/nvidia/cuda:12.4.1-base-ubuntu22.04
       - nvcr.io/nvidia/k8s/container-toolkit:v1.15.0-ubuntu20.04
       - nvcr.io/nvidia/driver:550.54.15-ubuntu22.04
