@@ -39,6 +39,7 @@ words:
   - repodata
   - repotrack
   - RHCOS
+  - rockylinux
   - Taskfile
   - taskfiles
   - tgagor
