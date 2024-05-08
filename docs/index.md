@@ -79,6 +79,36 @@ sudo apt-get install linux-headers-$(uname -r) -y
      nvidia/gpu-operator
 ```
 
+## Rocky 8
+
+```bash
+sudo dnf update && sudo dnf upgrade -y
+```
+
+```bash
+sudo dnf install epel-release
+```
+
+```bash
+sudo dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo 330
+```
+
+```bash
+sudo dnf install kernel-devel-$(uname -r) kernel-headers-$(uname -r)
+```
+
+```bash
+sudo dnf install nvidia-driver nvidia-settings
+```
+
+```bash
+sudo dnf install cuda-driver
+```
+
+```bash
+sudo reboot now
+```
+
 ## References
 
 - [WSL2 Support](https://github.com/NVIDIA/gpu-operator/issues/318)

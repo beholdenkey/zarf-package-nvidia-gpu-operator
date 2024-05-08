@@ -1,7 +1,7 @@
 # Nvidia GPU Operator Zarf Package
 
 > [!CAUTION]
-> This package is not production ready and is still under development.
+> This package is not production ready and is still under development. I am also working on putting together a test bench to validate the package.
 
 A Zarf package for the Nvidia GPU Operator. This zarf package is intended to perform a complete installation of the Nvidia GPU Operator in disconnected environments. There is a great deal of backend engineering that has gone into this package to provide seamless end to end installation of the Nvidia GPU Operator.
 
